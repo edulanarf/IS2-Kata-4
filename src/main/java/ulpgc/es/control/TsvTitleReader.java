@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class TsvTitleReader implements TitleReader{
@@ -16,27 +17,37 @@ public class TsvTitleReader implements TitleReader{
     }
 
     @Override
-    public List<Title> read() throws IOException {
+    public Iterator<Title> read() throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(source))) {
             readHeaderWith(reader);
             return readTitlesWith(reader);
         }
     }
 
+    private Iterator<Title> readTitlesWith(BufferedReader reader) throws IOException {
+        return new Iterator<>(){
+            String line = reader.readLine();
+            @Override
+            public boolean hasNext(){return line!=null;}
+
+            @Override
+            public Title next(){
+                try{
+                    Title title = line == null ? null : titleOf(line);
+                    line = reader.readLine();
+                    if(line==null) reader.close();
+                    return title;
+                } catch (IOException e){
+                    return null;
+                }
+            }
+        };
+
+    }
+
     private static void readHeaderWith(BufferedReader reader) throws IOException {
         reader.readLine();
     }
-
-    private List<Title> readTitlesWith(BufferedReader reader) throws IOException {
-        List<Title> titles = new ArrayList<>();
-        while (true) {
-            String l = reader.readLine();
-            if (l == null) break;
-            titles.add(titleOf(l));
-        }
-        return titles;
-    }
-
     private Title titleOf(String l){
         return new TsvTitleDeserialize().deserialize(l);
     }
