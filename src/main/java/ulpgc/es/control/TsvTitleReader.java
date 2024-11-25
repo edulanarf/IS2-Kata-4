@@ -14,7 +14,7 @@ public class TsvTitleReader implements TitleReader{
     private final File source;
     private final TsvTitleDeserialize deserializer;
 
-    public TsvTitleReader(File source, TsvTitleDeserialize deserializer) {
+    public TsvTitleReader(File source) {
         this.source = source;
         this.deserializer = new TsvTitleDeserialize();
     }
