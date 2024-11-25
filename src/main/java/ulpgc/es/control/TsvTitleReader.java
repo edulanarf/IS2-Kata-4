@@ -12,8 +12,11 @@ import java.util.List;
 
 public class TsvTitleReader implements TitleReader{
     private final File source;
-    public TsvTitleReader(File source) {
+    private final TsvTitleDeserialize deserializer;
+
+    public TsvTitleReader(File source, TsvTitleDeserialize deserializer) {
         this.source = source;
+        this.deserializer = new TsvTitleDeserialize();
     }
 
     @Override
@@ -49,6 +52,6 @@ public class TsvTitleReader implements TitleReader{
         reader.readLine();
     }
     private Title titleOf(String l){
-        return new TsvTitleDeserialize().deserialize(l);
+        return deserializer.deserialize(l);
     }
 }
